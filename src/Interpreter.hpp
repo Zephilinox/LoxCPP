@@ -22,6 +22,14 @@ public:
 		report(line, "", message);
 	}
 
+	static void error(LoxCPP::Token token, std::string message)
+	{
+		if (token.type == LoxCPP::Token::Type::EndOfFile)
+			report(token.line, " at end", message);
+		else
+			report(token.line, " at '" + token.lexeme + "'", message);
+	}
+
 	inline static const std::unordered_map<std::string, LoxCPP::Token::Type> string_to_token_type{
 		{"and", LoxCPP::Token::Type::And},
 		{"class", LoxCPP::Token::Type::Class},

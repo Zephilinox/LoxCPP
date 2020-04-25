@@ -8,6 +8,7 @@
 //SELF
 #include "LoxCPP/Expressions.hpp"
 #include "LoxCPP/Lexer.hpp"
+#include "LoxCPP/Parser.hpp"
 
 std::string Interpreter::toString(const LoxCPP::Token& token)
 {
@@ -74,13 +75,15 @@ std::string Interpreter::toString(const LoxCPP::Token::Type token_type)
 
 int Interpreter::run(std::string source)
 {
-	LoxCPP::Lexer lexer(source);
-	std::vector<LoxCPP::Token> tokens = lexer.generateTokens();
-
-	for (const auto token : tokens)
-	{
-		std::cout << toString(token) << "\n";
-	}
+	LoxCPP::Lexer lexer(std::move(source));
+	auto tokens = lexer.generateTokens();
+	LoxCPP::Parser parser(std::move(tokens));
+	const auto expr = parser.parse();
+	
+	if (hadError)
+		return -1;
+	
+	std::cout << expressionToString(expr) << "\n";
 
 	return 0;
 }
@@ -102,36 +105,7 @@ int Interpreter::runFile(char* file_name)
 }
 
 int Interpreter::runPrompt()
-{
-	std::unique_ptr<LoxCPP::ExpressionUnary> unary(new LoxCPP::ExpressionUnary {
-		LoxCPP::Token{
-			LoxCPP::Token::Type::Minus,
-			"-",
-			LoxCPP::None{},
-			1,
-		},
-		123.0
-	});
-	
-	std::unique_ptr<LoxCPP::ExpressionGrouping> group(new LoxCPP::ExpressionGrouping {
-		45.67
-	});
-
-	std::unique_ptr<LoxCPP::ExpressionBinary> binary(new LoxCPP::ExpressionBinary{
-		std::move(unary),
-		 LoxCPP::Token{
-			LoxCPP::Token::Type::Asterisk,
-			"*",
-			{},
-			1,
-		},
-		std::move(group)
-	});
-
-	std::cout << expressionToString(LoxCPP::Expression(std::move(binary))) << "\n";
-	
-	return 0;
-	
+{	
 	std::string line;
 	while (true)
 	{

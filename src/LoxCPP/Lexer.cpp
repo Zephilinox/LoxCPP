@@ -99,7 +99,6 @@ void Lexer::addToken(Token::Type type)
 void Lexer::addToken(Token::Type type, Token::Literal literal)
 {
 	assert(current - start > 0);
-	std::cout << current - start << " " << start << "\n";
 	assert(start >= 0);
 	assert(current <= source.length());
 	
@@ -110,7 +109,6 @@ void Lexer::addToken(Token::Type type, Token::Literal literal)
 char Lexer::peek(int offset)
 {
 	assert(current + offset <= source.length());
-	//std::cout << "peek: '" << source[current] << "'\n";
 	return source[current + offset];
 }
 

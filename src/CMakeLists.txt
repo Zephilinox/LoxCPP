@@ -11,6 +11,9 @@ set(LoxCPP_FILES
 
 	"LoxCPP/Lexer.hpp"
 	"LoxCPP/Lexer.cpp"
+	
+	"LoxCPP/Parser.hpp"
+	"LoxCPP/Parser.cpp"
 
 	"LoxCPP/Token.hpp"
 	"LoxCPP/Expressions.hpp"
