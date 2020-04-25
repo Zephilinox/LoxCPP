@@ -3,6 +3,7 @@
 //STD
 #include <string>
 #include <variant>
+#include <string>
 
 namespace LoxCPP
 {
@@ -10,7 +11,7 @@ namespace LoxCPP
 template <typename T>
 struct always_false
 {
-	inline static bool value = false;
+	inline static constexpr bool value = false;
 };
 
 struct None{};
@@ -73,5 +74,36 @@ public:
 	Literal literal;
 	int line;
 };
+
+inline std::string tokenToString(const Token& token)
+{
+	return token.lexeme;
+}
+
+inline std::string tokenLiteralToString(const Token::Literal& token_literal)
+{
+	auto visitor = [](const auto& literal) -> std::string {
+		using Lit = typename std::decay<decltype(literal)>::type;
+		
+		if constexpr (std::is_same_v<Lit, std::string>)
+		{
+			return literal;
+		}
+		else if constexpr (std::is_same_v<Lit, double>)
+		{
+			return std::to_string(literal);
+		}
+		else if constexpr (std::is_same_v<Lit, None>)
+		{
+			return "nil";
+		}
+		else
+		{
+			static_assert(always_false<Lit>::value);
+		}
+	};
+
+	return std::visit<std::string>(visitor, token_literal);
+}
 
 }
