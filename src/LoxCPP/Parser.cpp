@@ -1,7 +1,8 @@
 #include "Parser.hpp"
 
 //SELF
-#include "Interpreter.hpp"
+//todo: error handling should be part of the runner for this reason
+#include "Runner.hpp"
 
 namespace LoxCPP
 {
@@ -147,7 +148,7 @@ Expression Parser::primary()
 
 ParseError Parser::error(Token token, std::string message)
 {
-	Interpreter::error(std::move(token), std::move(message));
+	Runner::error(std::move(token), std::move(message));
 	return ParseError{};
 }
 

@@ -8,7 +8,7 @@
 //SELF
 #include "LoxCPP/Token.hpp"
 
-class Interpreter
+class Runner
 {
 public:
 	int run(std::string source);

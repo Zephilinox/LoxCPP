@@ -1,4 +1,4 @@
-#include "Interpreter.hpp"
+#include "Runner.hpp"
 
 //STD
 #include <iostream>
@@ -10,7 +10,7 @@
 #include "LoxCPP/Lexer.hpp"
 #include "LoxCPP/Parser.hpp"
 
-std::string Interpreter::toString(const LoxCPP::Token& token)
+std::string Runner::toString(const LoxCPP::Token& token)
 {
 	return toString(token.type) +
 		" '" + token.lexeme + "' " +
@@ -18,7 +18,7 @@ std::string Interpreter::toString(const LoxCPP::Token& token)
 		" at line " + std::to_string(token.line);
 }
 
-std::string Interpreter::toString(const LoxCPP::Token::Type token_type)
+std::string Runner::toString(const LoxCPP::Token::Type token_type)
 {
 #define TOKEN_TO_STRING_CASE(x) case LoxCPP::Token::Type::x: return #x;
 
@@ -73,7 +73,7 @@ std::string Interpreter::toString(const LoxCPP::Token::Type token_type)
 	return "parser_error";
 }
 
-int Interpreter::run(std::string source)
+int Runner::run(std::string source)
 {
 	LoxCPP::Lexer lexer(std::move(source));
 	auto tokens = lexer.generateTokens();
@@ -88,7 +88,7 @@ int Interpreter::run(std::string source)
 	return 0;
 }
 
-int Interpreter::runFile(char* file_name)
+int Runner::runFile(char* file_name)
 {
 	std::ifstream file(file_name);
 	if (file)
@@ -104,7 +104,7 @@ int Interpreter::runFile(char* file_name)
 	return -1;
 }
 
-int Interpreter::runPrompt()
+int Runner::runPrompt()
 {	
 	std::string line;
 	while (true)
@@ -122,7 +122,7 @@ int Interpreter::runPrompt()
 	return 0;
 }
 
-void Interpreter::report(int line, std::string where, std::string message)
+void Runner::report(int line, std::string where, std::string message)
 {
 	std::cout << "[line " << line << "] Error" << where << ": " << message << "\n";
 	hadError = true;

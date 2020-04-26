@@ -5,7 +5,7 @@
 #include <iostream>
 
 //SELF
-#include "Interpreter.hpp"
+#include "Runner.hpp"
 
 namespace LoxCPP
 {
@@ -85,7 +85,7 @@ void Lexer::scanToken()
 			}
 			else
 			{
-				Interpreter::error(line, std::string("Unexpected character: ") + c);
+				Runner::error(line, std::string("Unexpected character: ") + c);
 			}
 		}
 	}
@@ -141,7 +141,7 @@ void Lexer::handleStringCharacter()
 
 	if (isAtEnd())
 	{
-		Interpreter::error(start_line, "Unterminated string");
+		Runner::error(start_line, "Unterminated string");
 		return;
 	}
 
@@ -174,7 +174,7 @@ void Lexer::handleNumberCharacter()
 		}
 		else
 		{
-			Interpreter::error(line, "Expected digit after '.' when parsing number " +
+			Runner::error(line, "Expected digit after '.' when parsing number " +
 				source.substr(start, current) + " at line " + std::to_string(line) +
 				" but found '" + peek(1) + "' instead.");
 		}
@@ -190,9 +190,9 @@ void Lexer::handleIdentifierCharacter()
 
 	std::string text = source.substr(start, current);
 
-	const auto is_reserved = Interpreter::string_to_token_type.contains(text);
+	const auto is_reserved = Runner::string_to_token_type.contains(text);
 	if (is_reserved)
-		addToken(Interpreter::string_to_token_type.at(text));
+		addToken(Runner::string_to_token_type.at(text));
 	else
 		addToken(Token::Type::Identifier);	
 }

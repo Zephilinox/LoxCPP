@@ -20,7 +20,7 @@ struct Token
 {
 public:
 	
-	using Literal = std::variant<None, double, std::string>;
+	using Literal = std::variant<None, bool, double, std::string>;
 
 	enum class Type : std::uint8_t
 	{
@@ -97,9 +97,14 @@ inline std::string tokenLiteralToString(const Token::Literal& token_literal)
 		{
 			return "nil";
 		}
+		else if constexpr (std::is_same_v<Lit, bool>)
+		{
+			return literal ? "true" : "false";
+		}
 		else
 		{
-			static_assert(always_false<Lit>::value);
+			static_assert(always_false<Lit>::value,
+				"Unknown type. Did you forget to handle one of Token::Literal?");
 		}
 	};
 

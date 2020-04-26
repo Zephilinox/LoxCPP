@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "Interpreter.hpp"
+#include "Runner.hpp"
 
-//todo: make LoxCPP a library and move this to CTEST/LoxCPPInterpreter/REPL?
+//todo: make LoxCPP a library and move this to CTEST/LoxCPPRunner/REPL?
 
 int main(const int argc, char* argv[])
 {
@@ -14,12 +14,12 @@ int main(const int argc, char* argv[])
 		return 64;
 	}
 
-	Interpreter interpreter;
+	Runner Runner;
 	
 	if (argc == 2)
 	{
-		return interpreter.runFile(argv[1]);
+		return Runner.runFile(argv[1]);
 	}
 
-	return interpreter.runPrompt();
+	return Runner.runPrompt();
 }

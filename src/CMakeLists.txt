@@ -6,8 +6,8 @@ set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT LoxCPP)
 set(LoxCPP_FILES
 	"main.cpp"
 
-	"Interpreter.hpp"
-	"Interpreter.cpp"
+	"Runner.hpp"
+	"Runner.cpp"
 
 	"LoxCPP/Lexer.hpp"
 	"LoxCPP/Lexer.cpp"
