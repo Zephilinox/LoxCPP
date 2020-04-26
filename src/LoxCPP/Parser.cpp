@@ -16,7 +16,7 @@ Expression Parser::parse()
 	{
 		return expression();
 	}
-	catch (ParseError error)
+	catch ([[maybe_unused]] const ParseError& error)
 	{
 		return None{};
 	}
@@ -35,6 +35,7 @@ Expression Parser::equality()
 	{
 		Token op = previous();
 		Expression right = comparison();
+		//todo: CPP20 allows brace initialized std::make_unique
 		expr = std::unique_ptr<ExpressionBinary>(new ExpressionBinary {
 			std::move(expr),
 			std::move(op),
@@ -53,6 +54,7 @@ Expression Parser::comparison()
 	{
 		Token op = previous();
 		Expression right = addition();
+		//todo: CPP20 allows brace initialized std::make_unique
 		expr = std::unique_ptr<ExpressionBinary>(new ExpressionBinary{
 			std::move(expr),
 			std::move(op),
@@ -71,6 +73,7 @@ Expression Parser::addition()
 	{
 		Token op = previous();
 		Expression right = multiplication();
+		//todo: CPP20 allows brace initialized std::make_unique
 		expr = std::unique_ptr<ExpressionBinary>(new ExpressionBinary{
 			std::move(expr),
 			std::move(op),
@@ -88,6 +91,7 @@ Expression Parser::multiplication()
 	{
 		Token op = previous();
 		Expression right = unary();
+		//todo: CPP20 allows brace initialized std::make_unique
 		expr = std::unique_ptr<ExpressionBinary>(new ExpressionBinary{
 			std::move(expr),
 			std::move(op),
@@ -104,6 +108,7 @@ Expression Parser::unary()
 	{
 		Token op = previous();
 		Expression right = unary();
+		//todo: CPP20 allows brace initialized std::make_unique
 		return std::unique_ptr<ExpressionUnary>(new ExpressionUnary{
 			std::move(op),
 			std::move(right)
@@ -131,6 +136,7 @@ Expression Parser::primary()
 	{
 		Expression expr = expression();
 		consume(Token::Type::ParenthesisRight, "Expect ')' after expression.");
+		//todo: CPP20 allows brace initialized std::make_unique
 		return std::unique_ptr<ExpressionGrouping>(new ExpressionGrouping{
 			std::move(expr)
 		});
@@ -141,7 +147,7 @@ Expression Parser::primary()
 
 ParseError Parser::error(Token token, std::string message)
 {
-	Interpreter::error(token, message);
+	Interpreter::error(std::move(token), std::move(message));
 	return ParseError{};
 }
 

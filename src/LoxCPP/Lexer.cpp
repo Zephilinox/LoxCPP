@@ -13,7 +13,7 @@ namespace LoxCPP
 Lexer::Lexer(std::string source)
 	: source(source)
 {
-	std::cout << source << "\n";
+	std::cout << "Input: " << source << "\n";
 }
 
 std::vector<LoxCPP::Token> Lexer::generateTokens()
@@ -32,8 +32,8 @@ std::vector<LoxCPP::Token> Lexer::generateTokens()
 char Lexer::advance()
 {
 	current++;
-	assert(current - 1 >= 0);
-	return source[current - 1];
+	assert(current > 0);
+	return source[static_cast<std::size_t>(current) - 1];
 }
 
 void Lexer::scanToken()
@@ -98,18 +98,20 @@ void Lexer::addToken(Token::Type type)
 
 void Lexer::addToken(Token::Type type, Token::Literal literal)
 {
-	assert(current - start > 0);
+	assert(current >= 0);
 	assert(start >= 0);
-	assert(current <= source.length());
+	assert(current <= static_cast<int>(source.length()));
 	
-	std::string text = source.substr(start, current - start);
-	tokens.push_back({type, text, literal, line});
+	std::string text = source.substr(start, static_cast<std::size_t>(current) - start);
+	tokens.push_back({type, std::move(text), std::move(literal), line});
 }
 
 char Lexer::peek(int offset)
 {
-	assert(current + offset <= source.length());
-	return source[current + offset];
+	assert(current + offset <= static_cast<int>(source.length()));
+	assert(current >= 0);
+	assert(current + offset >= 0);
+	return source[static_cast<std::size_t>(current) + offset];
 }
 
 bool Lexer::match(char expected)
@@ -147,10 +149,12 @@ void Lexer::handleStringCharacter()
 	advance();
 
 	//Everything between the quotes
-	assert(start + 1 < source.size());
-	assert(current < source.size());
+	assert(start + 1 < static_cast<int>(source.size()));
+	assert(current <= static_cast<int>(source.size()));
 	assert(start + 1 < current - 1);
-	std::string literal = source.substr(start + 1, current - 1);
+	std::string literal = source.substr(
+		static_cast<std::size_t>(start) + 1,
+		static_cast<std::size_t>(current) - 1);
 	addToken(Token::Type::String, literal);
 }
 

@@ -83,7 +83,7 @@ inline std::string tokenToString(const Token& token)
 inline std::string tokenLiteralToString(const Token::Literal& token_literal)
 {
 	auto visitor = [](const auto& literal) -> std::string {
-		using Lit = typename std::decay<decltype(literal)>::type;
+		using Lit = typename std::decay_t<decltype(literal)>;
 		
 		if constexpr (std::is_same_v<Lit, std::string>)
 		{

@@ -83,9 +83,9 @@ private:
 
 	const Token& previous()
 	{
-		assert(current_token_index - 1 >= 0);
-		assert(current_token_index - 1 < static_cast<int>(tokens.size()));
-		return tokens[current_token_index - 1];
+		assert(current_token_index > 0);
+		assert(current_token_index <= static_cast<int>(tokens.size()));
+		return tokens[static_cast<std::size_t>(current_token_index) - 1];
 	}
 
 	const Token& consume(const Token::Type& type, const std::string& message)
