@@ -36,15 +36,14 @@ private:
 	Expression primary();
 	
 	template <typename... Types>
-	bool match(Types... types)
+	bool match(const Types&... types)
 	{
-		static_assert(std::conjunction_v<std::is_same<Types, Token::Type>...>,
+		static_assert(std::conjunction_v<std::is_same<std::decay_t<Types>, Token::Type>...>,
 			"match only accepts values of Token::Type type");
 		
-		std::array types_in_array{types...};
-		for (const auto& type : types_in_array)
+		for (const auto* type : {&types...})
 		{
-			if (check(type))
+			if (check(*type))
 			{
 				advance();
 				return true;
@@ -54,7 +53,7 @@ private:
 		return false;
 	}
 
-	bool check(Token::Type type)
+	bool check(const Token::Type& type)
 	{
 		if (isAtEnd())
 			return false;
@@ -62,7 +61,7 @@ private:
 		return peek().type == type;
 	}
 
-	Token advance()
+	const Token& advance()
 	{
 		if (!isAtEnd())
 			current_token_index++;
@@ -75,33 +74,33 @@ private:
 		return peek().type == Token::Type::EndOfFile;
 	}
 
-	Token peek()
+	const Token& peek()
 	{
 		assert(current_token_index >= 0);
 		assert(current_token_index < static_cast<int>(tokens.size()));
 		return tokens[current_token_index];
 	}
 
-	Token previous()
+	const Token& previous()
 	{
 		assert(current_token_index - 1 >= 0);
 		assert(current_token_index - 1 < static_cast<int>(tokens.size()));
 		return tokens[current_token_index - 1];
 	}
 
-	Token consume(Token::Type type, std::string message)
+	const Token& consume(const Token::Type& type, const std::string& message)
 	{
 		if (check(type))
 			return advance();
 
 		//oof
-		throw error(peek(), std::move(message));
+		throw error(peek(), message);
 	}
 
 	ParseError error(Token token, std::string message);
 	void synchronize();
 	
-	std::vector<Token> tokens;
+	const std::vector<Token> tokens;
 	int current_token_index = 0;
 };
 }
