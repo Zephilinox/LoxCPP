@@ -73,6 +73,12 @@ std::string Runner::toString(const LoxCPP::Token::Type token_type)
 	return "parser_error";
 }
 
+void Runner::runtimeError(const LoxCPP::RuntimeError& error)
+{
+	std::cout << error.what() << "\n[line " << error.token.line << "]\n";
+	hadRuntimeError = true;
+}
+
 int Runner::run(std::string source)
 {
 	LoxCPP::Lexer lexer(std::move(source));
@@ -82,8 +88,8 @@ int Runner::run(std::string source)
 	
 	if (hadError)
 		return -1;
-	
-	std::cout << expressionToString(expr) << "\n";
+
+	interpreter.interpret(expr);
 
 	return 0;
 }
@@ -99,6 +105,9 @@ int Runner::runFile(char* file_name)
 
 		if (hadError)
 			return 65;
+		
+		if (hadRuntimeError)
+			return 70;
 	}
 
 	return -1;

@@ -42,7 +42,7 @@ struct ExpressionGrouping
 inline std::string expressionToString(const Expression& expression)
 {
 	static auto visitor = [](const auto& expression) -> std::string {
-		using Expr = typename std::decay<decltype(expression)>::type;
+		using Expr = typename std::decay_t<decltype(expression)>;
 		
 		if constexpr (std::is_same_v<Expr, std::unique_ptr<ExpressionUnary>>)
 		{

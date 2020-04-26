@@ -14,7 +14,15 @@ struct always_false
 	inline static constexpr bool value = false;
 };
 
-struct None{};
+struct None
+{
+	friend constexpr bool operator==(const None& left, const None& right);
+};
+
+constexpr bool operator==([[maybe_unused]] const None& left, [[maybe_unused]] const None& right)
+{
+	return true;
+}
 
 struct Token
 {
@@ -24,6 +32,7 @@ public:
 
 	enum class Type : std::uint8_t
 	{
+		Invalid,
 		ParenthesisLeft,
 		ParenthesisRight,
 		BraceLeft,
@@ -69,10 +78,10 @@ public:
 		EndOfFile,
 	};
 
-	Type type;
+	Type type = Type::Invalid;
 	std::string lexeme;
 	Literal literal;
-	int line;
+	int line = -1;
 };
 
 inline std::string tokenToString(const Token& token)

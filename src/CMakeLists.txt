@@ -14,6 +14,9 @@ set(LoxCPP_FILES
 	
 	"LoxCPP/Parser.hpp"
 	"LoxCPP/Parser.cpp"
+	
+	"LoxCPP/Interpreter.hpp"
+	"LoxCPP/Interpreter.cpp"
 
 	"LoxCPP/Token.hpp"
 	"LoxCPP/Expressions.hpp"

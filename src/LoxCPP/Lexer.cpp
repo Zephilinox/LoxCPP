@@ -13,7 +13,6 @@ namespace LoxCPP
 Lexer::Lexer(std::string source)
 	: source(source)
 {
-	std::cout << "Input: " << source << "\n";
 }
 
 std::vector<LoxCPP::Token> Lexer::generateTokens()

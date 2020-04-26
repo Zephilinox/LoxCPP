@@ -7,6 +7,7 @@
 
 //SELF
 #include "LoxCPP/Token.hpp"
+#include "LoxCPP/Interpreter.hpp"
 
 class Runner
 {
@@ -49,8 +50,13 @@ public:
 		{"while", LoxCPP::Token::Type::While},
 	};
 
+	static void runtimeError(const LoxCPP::RuntimeError& error);
+
 private:
 	inline static bool hadError = false;
+	inline static bool hadRuntimeError = false;
 	static std::string toString(const LoxCPP::Token& token);
 	static std::string toString(LoxCPP::Token::Type token_type);
+
+	LoxCPP::Interpreter interpreter;
 };
