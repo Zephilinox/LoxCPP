@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 //Self
+#include "Statements.hpp"
 #include "Expressions.hpp"
 #include "Token.hpp"
 
@@ -24,7 +25,7 @@ class Parser
 public:
 	Parser(std::vector<Token>&& tokens);
 	
-	Expression parse();
+	std::vector<Statement> parse();
 
 private:
 	Expression expression();
@@ -34,6 +35,9 @@ private:
 	Expression multiplication();
 	Expression unary();
 	Expression primary();
+	Statement statement();
+	Statement printStatement();
+	Statement expressionStatement();
 	
 	template <typename... Types>
 	bool match(const Types&... types)

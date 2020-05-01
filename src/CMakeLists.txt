@@ -20,6 +20,7 @@ set(LoxCPP_FILES
 
 	"LoxCPP/Token.hpp"
 	"LoxCPP/Expressions.hpp"
+	"LoxCPP/Statements.hpp"
 )
 
 file(GLOB_RECURSE LoxCPP_FILES_GLOBBED LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS *.cpp *.hpp)

@@ -153,7 +153,7 @@ void Lexer::handleStringCharacter()
 	assert(start + 1 < current - 1);
 	std::string literal = source.substr(
 		static_cast<std::size_t>(start) + 1,
-		static_cast<std::size_t>(current) - 1);
+		static_cast<std::size_t>(current) - start - 2);
 	addToken(Token::Type::String, literal);
 }
 
@@ -174,12 +174,12 @@ void Lexer::handleNumberCharacter()
 		else
 		{
 			Runner::error(line, "Expected digit after '.' when parsing number " +
-				source.substr(start, current) + " at line " + std::to_string(line) +
+				source.substr(start, current - start) + " at line " + std::to_string(line) +
 				" but found '" + peek(1) + "' instead.");
 		}
 	}
 
-	addToken(Token::Type::Number, std::stod(source.substr(start, current)));
+	addToken(Token::Type::Number, std::stod(source.substr(start, current - start)));
 }
 
 void Lexer::handleIdentifierCharacter()
@@ -187,7 +187,7 @@ void Lexer::handleIdentifierCharacter()
 	while (isAlphaNumeric(peek()))
 		advance();
 
-	std::string text = source.substr(start, current);
+	std::string text = source.substr(start, current - start);
 
 	const auto is_reserved = Runner::string_to_token_type.contains(text);
 	if (is_reserved)

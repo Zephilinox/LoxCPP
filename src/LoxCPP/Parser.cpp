@@ -11,16 +11,15 @@ Parser::Parser(std::vector<Token>&& tokens)
 {
 }
 
-Expression Parser::parse()
+std::vector<Statement> Parser::parse()
 {
-	try
-	{
-		return expression();
+	std::vector<Statement> statements;
+
+	while (!isAtEnd()) {
+		statements.push_back(statement());
 	}
-	catch ([[maybe_unused]] const ParseError& error)
-	{
-		return None{};
-	}
+
+	return statements;
 }
 
 Expression Parser::expression()
@@ -144,6 +143,26 @@ Expression Parser::primary()
 	}
 
 	throw error(peek(), "Expect expression.");
+}
+
+Statement Parser::statement()
+{
+	if (match(Token::Type::Print))
+		return printStatement();
+
+	return expressionStatement();
+}
+
+Statement Parser::printStatement()
+{
+	Expression value = expression();
+	consume(Token::Type::Semicolon, "Expect ';' after value");
+	return StatementPrint{std::move(value)};
+}
+
+Statement Parser::expressionStatement()
+{
+	return StatementExpression{expression()};
 }
 
 ParseError Parser::error(Token token, std::string message)

@@ -8,16 +8,24 @@
 
 namespace LoxCPP
 {
-void Interpreter::interpret(const Expression& expression)
+void Interpreter::interpret(const std::vector<Statement>& statements)
 {
 	try
 	{
-		const Token::Literal literal = evaluate(expression);
-		std::cout << tokenLiteralToString(literal) << "\n";
-	} catch (const RuntimeError& error)
+		for (const auto& statement : statements)
+		{
+			execute(statement);
+		}
+	}
+	catch (const RuntimeError& error)
 	{
 		Runner::runtimeError(error);
 	}
+}
+
+void Interpreter::execute(const Statement& statement)
+{
+	handleStatement(statement);
 }
 
 Token::Literal Interpreter::evaluate(const Expression& expression)
@@ -197,6 +205,26 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 	};
 	
 	return std::visit<Token::Literal>(visitor, expression);
+}
+
+void Interpreter::handleStatement(const Statement& statement)
+{
+	const auto visitor = [this](const auto& statement) -> void {
+		using Stmt = typename std::decay_t<decltype(statement)>;
+
+		if constexpr (std::is_same_v<Stmt, StatementExpression>)
+		{
+			evaluate(statement.expression);
+		}
+		else if constexpr (std::is_same_v<Stmt, StatementPrint>)
+		{
+			auto literal = evaluate(statement.expression);
+			std::cout << tokenLiteralToString(literal) << "\n";
+		}
+		
+	};
+
+	std::visit(visitor, statement);
 }
 
 bool Interpreter::isTruthy(const Token::Literal& literal)

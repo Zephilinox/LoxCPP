@@ -2,8 +2,10 @@
 
 //STD
 #include <stdexcept>
+#include <vector>
 
 //SELF
+#include "Statements.hpp"
 #include "Expressions.hpp"
 #include "Token.hpp"
 
@@ -25,10 +27,13 @@ public:
 class Interpreter
 {
 public:
-	void interpret(const Expression& expression);
+	void interpret(const std::vector<Statement>& statements);
 	
 private:
+	void execute(const Statement& statement);
 	Token::Literal evaluate(const Expression& expression);
+	void handleStatement(const Statement& statement);
+	
 	bool isTruthy(const Token::Literal& literal);
 	bool isEqual(const Token::Literal& left, const Token::Literal& right);
 };

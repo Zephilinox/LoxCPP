@@ -84,12 +84,12 @@ int Runner::run(std::string source)
 	LoxCPP::Lexer lexer(std::move(source));
 	auto tokens = lexer.generateTokens();
 	LoxCPP::Parser parser(std::move(tokens));
-	const auto expr = parser.parse();
+	std::vector<LoxCPP::Statement> statements = parser.parse();
 	
 	if (hadError)
 		return -1;
 
-	interpreter.interpret(expr);
+	interpreter.interpret(statements);
 
 	return 0;
 }
