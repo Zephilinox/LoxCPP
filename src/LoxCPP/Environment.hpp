@@ -12,6 +12,8 @@ class Environment
 {
 public:
 	void define(std::string name, Token::Literal value);
+	void assign(Token name, Token::Literal value);
+
 	Token::Literal get(const Token& name) const;
 
 private:

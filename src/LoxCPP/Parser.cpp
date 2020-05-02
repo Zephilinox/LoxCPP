@@ -24,7 +24,7 @@ std::vector<Statement> Parser::parse()
 
 Expression Parser::expression()
 {
-	return equality();
+	return assignment();
 }
 
 Expression Parser::equality()
@@ -184,6 +184,30 @@ Statement Parser::declaration()
 		synchronize();
 		return None{};
 	}
+}
+
+Expression Parser::assignment()
+{
+	Expression expr = equality();
+
+	if (match(Token::Type::Equal))
+	{
+		Token equals = previous();
+		Expression value = assignment();
+
+		if (std::holds_alternative<ExpressionVariable>(expr))
+		{
+			Token name = std::get<ExpressionVariable>(expr).name;
+			return std::unique_ptr<ExpressionAssignment>(new ExpressionAssignment{
+				std::move(name), std::move(value)
+			});
+		}
+
+		//discard exception object, just log, we don't need to synchronize
+		error(std::move(equals), "Invalid assignment target.");
+	}
+
+	return expr;
 }
 
 Statement Parser::variableDeclaration()

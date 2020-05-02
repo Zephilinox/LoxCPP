@@ -13,6 +13,7 @@ namespace LoxCPP
 struct ExpressionBinary;
 struct ExpressionUnary;
 struct ExpressionGrouping;
+struct ExpressionAssignment;
 
 struct ExpressionVariable
 {
@@ -21,11 +22,12 @@ struct ExpressionVariable
 
 using Expression = std::variant<
 	None,
+	Token::Literal,
+	ExpressionVariable,
 	std::unique_ptr<ExpressionBinary>,
 	std::unique_ptr<ExpressionUnary>,
 	std::unique_ptr<ExpressionGrouping>,
-	ExpressionVariable,
-	Token::Literal
+	std::unique_ptr<ExpressionAssignment>
 >;
 
 struct ExpressionBinary
@@ -44,6 +46,12 @@ struct ExpressionUnary
 struct ExpressionGrouping
 {
 	Expression expression;
+};
+
+struct ExpressionAssignment
+{
+	Token name;
+	Expression value;
 };
 
 inline std::string expressionToString(const Expression& expression)

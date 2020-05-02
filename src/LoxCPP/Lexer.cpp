@@ -134,7 +134,7 @@ void Lexer::handleStringCharacter()
 	{
 		if (peek() == '\n')
 			line++;
-
+		
 		advance();
 	}
 
@@ -154,6 +154,20 @@ void Lexer::handleStringCharacter()
 	std::string literal = source.substr(
 		static_cast<std::size_t>(start) + 1,
 		static_cast<std::size_t>(current) - start - 2);
+
+	//replace "\n" with '\n' in strings.
+	//todo: is this only an issue in the REPL, or also when loading from a file? could maybe move to the runner if just REPL, but then it will also work on "\n" outside of strings
+	std::size_t index = 0;
+	while (true)
+	{
+		index = literal.find("\\n", index);
+		if (index == std::string::npos)
+			break;
+
+		literal.replace(index, 2, "\n");
+		index -= 1;
+	}
+	
 	addToken(Token::Type::String, literal);
 }
 

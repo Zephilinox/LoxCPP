@@ -35,10 +35,12 @@ private:
 	Expression multiplication();
 	Expression unary();
 	Expression primary();
+	Expression assignment();
+	
 	Statement statement();
+	Statement declaration();
 	Statement printStatement();
 	Statement expressionStatement();
-	Statement declaration();
 	Statement variableDeclaration();
 	
 	template <typename... Types>

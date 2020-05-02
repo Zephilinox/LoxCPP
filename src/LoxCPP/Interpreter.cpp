@@ -197,6 +197,14 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 			throw RuntimeError(expr->operator_token,
 				"Invalid operator for Binary Expression");
 		}
+		else if constexpr (std::is_same_v<Expr, std::unique_ptr<ExpressionAssignment>>)
+		{
+			Token::Literal value = evaluate(expr->value);
+
+			environment.assign(expr->name, value);
+			return value;
+			
+		}
 		else if constexpr (std::is_same_v<Expr, ExpressionVariable>)
 		{
 			return environment.get(expr.name);
