@@ -18,5 +18,17 @@ struct StatementExpression
 	Expression expression;
 };
 
-using Statement = std::variant<StatementPrint, StatementExpression>;
+struct StatementVariable
+{
+	Token name;
+	Expression initializer;
+};
+
+using Statement = std::variant<
+	None,
+	StatementPrint,
+	StatementExpression,
+	StatementVariable
+>;
+
 }

@@ -14,10 +14,17 @@ struct ExpressionBinary;
 struct ExpressionUnary;
 struct ExpressionGrouping;
 
+struct ExpressionVariable
+{
+	Token name;
+};
+
 using Expression = std::variant<
+	None,
 	std::unique_ptr<ExpressionBinary>,
 	std::unique_ptr<ExpressionUnary>,
 	std::unique_ptr<ExpressionGrouping>,
+	ExpressionVariable,
 	Token::Literal
 >;
 

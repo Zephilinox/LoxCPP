@@ -38,6 +38,8 @@ private:
 	Statement statement();
 	Statement printStatement();
 	Statement expressionStatement();
+	Statement declaration();
+	Statement variableDeclaration();
 	
 	template <typename... Types>
 	bool match(const Types&... types)

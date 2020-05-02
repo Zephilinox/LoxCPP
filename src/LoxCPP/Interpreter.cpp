@@ -197,6 +197,15 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 			throw RuntimeError(expr->operator_token,
 				"Invalid operator for Binary Expression");
 		}
+		else if constexpr (std::is_same_v<Expr, ExpressionVariable>)
+		{
+			return environment.get(expr.name);
+		}
+		else if constexpr (std::is_same_v<Expr, None>)
+		{
+			//todo?
+			throw RuntimeError({}, "Invalid Expression");
+		}
 		else
 		{
 			static_assert(always_false<Expr>::value,
@@ -220,6 +229,29 @@ void Interpreter::handleStatement(const Statement& statement)
 		{
 			auto literal = evaluate(statement.expression);
 			std::cout << tokenLiteralToString(literal) << "\n";
+		}
+		else if constexpr (std::is_same_v<Stmt, StatementVariable>)
+		{
+			Token::Literal value;
+
+			//todo: technically we could handle this case in evaluate. we kinda do since we reuse the same None type for literals, expressions, and statements.
+			//that also means an invalid statement is a "nil" value :b probably not a good thing, so for now just keep it like this
+			if (!std::holds_alternative<None>(statement.initializer))
+			{
+				value = evaluate(statement.initializer);
+			}
+
+			environment.define(statement.name.lexeme, value);
+		}
+		else if constexpr (std::is_same_v<Stmt, None>)
+		{
+			//todo?
+			throw RuntimeError({}, "Invalid Statement");
+		}
+		else
+		{
+			static_assert(always_false<Stmt>::value,
+				"Unknown type. Did you forget to handle one of Statement?");
 		}
 		
 	};

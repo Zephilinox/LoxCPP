@@ -16,7 +16,7 @@ std::vector<Statement> Parser::parse()
 	std::vector<Statement> statements;
 
 	while (!isAtEnd()) {
-		statements.push_back(statement());
+		statements.push_back(declaration());
 	}
 
 	return statements;
@@ -132,6 +132,11 @@ Expression Parser::primary()
 	if (match(Token::Type::Number, Token::Type::String))
 		return previous().literal;
 
+	if (match(Token::Type::Identifier))
+	{
+		return ExpressionVariable{previous()};
+	}
+	
 	if (match(Token::Type::ParenthesisLeft))
 	{
 		Expression expr = expression();
@@ -163,6 +168,36 @@ Statement Parser::printStatement()
 Statement Parser::expressionStatement()
 {
 	return StatementExpression{expression()};
+}
+
+Statement Parser::declaration()
+{
+	try
+	{
+		if (match(Token::Type::Var))
+			return variableDeclaration();
+
+		return statement();
+	}
+	catch (std::exception& e)
+	{
+		synchronize();
+		return None{};
+	}
+}
+
+Statement Parser::variableDeclaration()
+{
+	Token name = consume(Token::Type::Identifier, "Expect variable name.");
+
+	Expression initializer = None{};
+	if (match(Token::Type::Equal))
+	{
+		initializer = expression();
+	}
+
+	consume(Token::Type::Semicolon, "Expect ';' after variable declaration");
+	return StatementVariable{std::move(name), std::move(initializer)};
 }
 
 ParseError Parser::error(Token token, std::string message)
