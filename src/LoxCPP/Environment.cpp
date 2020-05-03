@@ -14,19 +14,26 @@ void Environment::assign(Token name, Token::Literal value)
 {
 	const auto it = values.find(name.lexeme);
 
-	if (it == values.end())
-		throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+	if (it != values.end())
+		values.emplace(std::move(name.lexeme), std::move(value));
 
-	values.emplace(std::move(name.lexeme), std::move(value));
+	if (parent)
+		parent->assign(std::move(name), std::move(value));
+
+	throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 }
 
 Token::Literal Environment::get(const Token& name) const
 {
 	const auto it = values.find(name.lexeme);
 
-	if (it == values.end())
-		throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+	if (it != values.end())
+		return it->second;
 
-	return it->second;
+	if (parent)
+		return parent->get(name);
+	
+	throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+
 }
 }

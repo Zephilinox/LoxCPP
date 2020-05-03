@@ -2,6 +2,7 @@
 
 //STD
 #include <unordered_map>
+#include <memory>
 
 //SELF
 #include "Token.hpp"
@@ -14,7 +15,9 @@ public:
 	void define(std::string name, Token::Literal value);
 	void assign(Token name, Token::Literal value);
 
-	Token::Literal get(const Token& name) const;
+	[[nodiscard]] Token::Literal get(const Token& name) const;
+
+	Environment* parent = nullptr;
 
 private:
 	std::unordered_map<std::string, Token::Literal> values;

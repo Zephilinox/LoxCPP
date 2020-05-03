@@ -8,8 +8,15 @@
 
 namespace LoxCPP
 {
-void Interpreter::interpret(const std::vector<Statement>& statements)
+
+Interpreter::Interpreter()
 {
+	//we always have a global environment
+	environments.emplace_back();
+}
+
+void Interpreter::interpret(const std::vector<Statement>& statements)
+{	
 	try
 	{
 		for (const auto& statement : statements)
@@ -26,6 +33,28 @@ void Interpreter::interpret(const std::vector<Statement>& statements)
 void Interpreter::execute(const Statement& statement)
 {
 	handleStatement(statement);
+}
+
+void Interpreter::executeBlock(const std::vector<Statement>& statements)
+{
+	environments.emplace_back();
+
+	try
+	{
+		for (const auto& statement : statements)
+		{
+			execute(statement);
+		}
+	}
+	catch (std::exception& e)
+	{
+		//catch any exceptions so we guarantee we pop the environment
+		//todo: replace with scoped guard
+		environments.pop_back();
+		throw;
+	}
+
+	environments.pop_back();
 }
 
 Token::Literal Interpreter::evaluate(const Expression& expression)
@@ -201,13 +230,13 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 		{
 			Token::Literal value = evaluate(expr->value);
 
-			environment.assign(expr->name, value);
+			environments.back().assign(expr->name, value);
 			return value;
 			
 		}
 		else if constexpr (std::is_same_v<Expr, ExpressionVariable>)
 		{
-			return environment.get(expr.name);
+			return environments.back().get(expr.name);
 		}
 		else if constexpr (std::is_same_v<Expr, None>)
 		{
@@ -249,7 +278,11 @@ void Interpreter::handleStatement(const Statement& statement)
 				value = evaluate(statement.initializer);
 			}
 
-			environment.define(statement.name.lexeme, value);
+			environments.back().define(statement.name.lexeme, value);
+		}
+		else if constexpr (std::is_same_v<Stmt, std::unique_ptr<StatementBlock>>)
+		{
+			executeBlock(statement->statements);
 		}
 		else if constexpr (std::is_same_v<Stmt, None>)
 		{

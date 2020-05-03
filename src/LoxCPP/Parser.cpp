@@ -150,10 +150,26 @@ Expression Parser::primary()
 	throw error(peek(), "Expect expression.");
 }
 
+std::vector<Statement> Parser::block()
+{
+	std::vector<Statement> statements;
+
+	while (!check(Token::Type::BraceRight) && !isAtEnd())
+		statements.push_back(declaration());
+
+	consume(Token::Type::BraceRight, "Expect '}' after block.");
+	return statements;
+}
+
 Statement Parser::statement()
 {
 	if (match(Token::Type::Print))
 		return printStatement();
+
+	if (match(Token::Type::BraceLeft))
+		return std::unique_ptr<StatementBlock>(new StatementBlock {
+			block()
+		});
 
 	return expressionStatement();
 }
