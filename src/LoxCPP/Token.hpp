@@ -14,6 +14,16 @@ struct always_false
 	inline static constexpr bool value = false;
 };
 
+struct Uninitialized
+{
+	friend constexpr bool operator==(const Uninitialized& left, const Uninitialized& right);
+};
+
+constexpr bool operator==([[maybe_unused]] const Uninitialized& left, [[maybe_unused]] const Uninitialized& right)
+{
+	return false;
+}
+
 struct None
 {
 	friend constexpr bool operator==(const None& left, const None& right);
@@ -28,7 +38,7 @@ struct Token
 {
 public:
 	
-	using Literal = std::variant<None, bool, double, std::string>;
+	using Literal = std::variant<None, Uninitialized, bool, double, std::string>;
 
 	enum class Type : std::uint8_t
 	{
@@ -109,6 +119,11 @@ inline std::string tokenLiteralToString(const Token::Literal& token_literal)
 		else if constexpr (std::is_same_v<Lit, bool>)
 		{
 			return literal ? "true" : "false";
+		}
+		else if constexpr (std::is_same_v<Lit, Uninitialized>)
+		{
+			//this should never occur, but don't want to throw an exception here for now
+			return "internal compiler error. uninitialized value evaluated";
 		}
 		else
 		{

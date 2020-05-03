@@ -250,7 +250,14 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 		}
 	};
 	
-	return std::visit<Token::Literal>(visitor, expression);
+	auto value = std::visit<Token::Literal>(visitor, expression);
+
+	if (std::holds_alternative<Uninitialized>(value))
+	{
+		throw RuntimeError({}, "Tried to evaluate an uninitialized value");
+	}
+
+	return value;
 }
 
 void Interpreter::handleStatement(const Statement& statement)
@@ -271,9 +278,11 @@ void Interpreter::handleStatement(const Statement& statement)
 		{
 			Token::Literal value;
 
-			//todo: technically we could handle this case in evaluate. we kinda do since we reuse the same None type for literals, expressions, and statements.
-			//that also means an invalid statement is a "nil" value :b probably not a good thing, so for now just keep it like this
-			if (!std::holds_alternative<None>(statement.initializer))
+			if (std::holds_alternative<Token::Literal>(statement.initializer))
+			{
+				value = std::get<Token::Literal>(statement.initializer);
+			}
+			else
 			{
 				value = evaluate(statement.initializer);
 			}

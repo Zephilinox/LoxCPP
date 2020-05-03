@@ -230,7 +230,7 @@ Statement Parser::variableDeclaration()
 {
 	Token name = consume(Token::Type::Identifier, "Expect variable name.");
 
-	Expression initializer = None{};
+	Expression initializer = Uninitialized{};
 	if (match(Token::Type::Equal))
 	{
 		initializer = expression();
