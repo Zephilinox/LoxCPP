@@ -12,7 +12,7 @@
 class Runner
 {
 public:
-	int run(std::string source);
+	int run(std::string source, bool print_expressions = false);
 	int runFile(char* file_name);
 	int runPrompt();
 

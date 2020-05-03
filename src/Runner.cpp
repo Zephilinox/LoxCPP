@@ -79,7 +79,7 @@ void Runner::runtimeError(const LoxCPP::RuntimeError& error)
 	hadRuntimeError = true;
 }
 
-int Runner::run(std::string source)
+int Runner::run(std::string source, bool print_expressions)
 {
 	LoxCPP::Lexer lexer(std::move(source));
 	auto tokens = lexer.generateTokens();
@@ -89,8 +89,21 @@ int Runner::run(std::string source)
 	if (hadError)
 		return -1;
 
+	if (print_expressions)
+	{
+		if (statements.size() == 1 && 
+			std::holds_alternative<LoxCPP::StatementExpression>(statements[0]))
+		{
+			auto expr_statement = std::move(std::get<LoxCPP::StatementExpression>(statements[0]));
+			statements.clear();
+			statements.emplace_back(LoxCPP::StatementPrint {
+				std::move(expr_statement.expression)
+			});
+		}
+	}
+	
 	interpreter.interpret(statements);
-
+	
 	return 0;
 }
 
@@ -124,7 +137,7 @@ int Runner::runPrompt()
 		if (line == ":q")
 			break;
 		
-		run(line);
+		run(line, true);
 		hadError = false;
 	}
 

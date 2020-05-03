@@ -260,7 +260,7 @@ void Interpreter::handleStatement(const Statement& statement)
 
 		if constexpr (std::is_same_v<Stmt, StatementExpression>)
 		{
-			evaluate(statement.expression);
+			auto value = evaluate(statement.expression);
 		}
 		else if constexpr (std::is_same_v<Stmt, StatementPrint>)
 		{
