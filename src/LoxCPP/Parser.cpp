@@ -171,6 +171,9 @@ Statement Parser::statement()
 			block()
 		});
 
+	if (match(Token::Type::If))
+		return ifStatement();
+	
 	return expressionStatement();
 }
 
@@ -184,6 +187,25 @@ Statement Parser::printStatement()
 Statement Parser::expressionStatement()
 {
 	return StatementExpression{expression()};
+}
+
+Statement Parser::ifStatement()
+{
+	consume(Token::Type::ParenthesisLeft, "Expect '(' after 'if'.");
+	Expression condition = expression();
+	consume(Token::Type::ParenthesisRight, "Expect ')' after if condition.");
+
+	Statement thenBranch = statement();
+	Statement elseBranch = None{};
+
+	if (match(Token::Type::Else))
+		elseBranch = statement();
+
+	return std::unique_ptr<StatementIf>(new StatementIf{
+		std::move(condition),
+		std::move(thenBranch),
+		std::move(elseBranch)
+	});
 }
 
 Statement Parser::declaration()

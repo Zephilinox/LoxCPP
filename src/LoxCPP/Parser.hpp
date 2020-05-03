@@ -42,6 +42,7 @@ private:
 	Statement declaration();
 	Statement printStatement();
 	Statement expressionStatement();
+	Statement ifStatement();
 	Statement variableDeclaration();
 	
 	template <typename... Types>

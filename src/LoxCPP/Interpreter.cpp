@@ -298,6 +298,13 @@ void Interpreter::handleStatement(const Statement& statement)
 		{
 			executeBlock(statement->statements);
 		}
+		else if constexpr (std::is_same_v<Stmt, std::unique_ptr<StatementIf>>)
+		{
+			if (isTruthy(evaluate(statement->condition)))
+				execute(statement->thenBranch);
+			else if (!std::holds_alternative<None>(statement->elseBranch))
+				execute(statement->elseBranch);
+		}
 		else if constexpr (std::is_same_v<Stmt, None>)
 		{
 			//todo?

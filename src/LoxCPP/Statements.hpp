@@ -26,17 +26,27 @@ struct StatementVariable
 
 struct StatementBlock;
 
+struct StatementIf;
+
 using Statement = std::variant<
 	None,
 	StatementPrint,
 	StatementExpression,
 	StatementVariable,
-	std::unique_ptr<StatementBlock>
+	std::unique_ptr<StatementBlock>,
+	std::unique_ptr<StatementIf>
 >;
 
 struct StatementBlock
 {
 	std::vector<Statement> statements;
+};
+
+struct StatementIf
+{
+	Expression condition;
+	Statement thenBranch;
+	Statement elseBranch;
 };
 
 }
