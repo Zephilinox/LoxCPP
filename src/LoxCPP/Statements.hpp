@@ -25,8 +25,8 @@ struct StatementVariable
 };
 
 struct StatementBlock;
-
 struct StatementIf;
+struct StatementWhile;
 
 using Statement = std::variant<
 	None,
@@ -34,6 +34,7 @@ using Statement = std::variant<
 	StatementExpression,
 	StatementVariable,
 	std::unique_ptr<StatementBlock>,
+	std::unique_ptr<StatementWhile>,
 	std::unique_ptr<StatementIf>
 >;
 
@@ -47,6 +48,12 @@ struct StatementIf
 	Expression condition;
 	Statement thenBranch;
 	Statement elseBranch;
+};
+
+struct StatementWhile
+{
+	Expression condition;
+	Statement body;
 };
 
 }

@@ -173,6 +173,9 @@ Statement Parser::statement()
 
 	if (match(Token::Type::If))
 		return ifStatement();
+
+	if (match(Token::Type::While))
+		return whileStatement();
 	
 	return expressionStatement();
 }
@@ -205,6 +208,19 @@ Statement Parser::ifStatement()
 		std::move(condition),
 		std::move(thenBranch),
 		std::move(elseBranch)
+	});
+}
+
+Statement Parser::whileStatement()
+{
+	consume(Token::Type::ParenthesisLeft, "Expect '(' after 'while'.");
+	Expression condition = expression();
+	consume(Token::Type::ParenthesisRight, "Expect ')' after condition.");
+	Statement body = statement();
+
+	return std::unique_ptr<StatementWhile>(new StatementWhile{
+		std::move(condition),
+		std::move(body)
 	});
 }
 

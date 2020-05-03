@@ -321,6 +321,13 @@ void Interpreter::handleStatement(const Statement& statement)
 			else if (!std::holds_alternative<None>(statement->elseBranch))
 				execute(statement->elseBranch);
 		}
+		else if constexpr (std::is_same_v<Stmt, std::unique_ptr<StatementWhile>>)
+		{
+			while (isTruthy(evaluate(statement->condition)))
+			{
+				execute(statement->body);
+			}
+		}
 		else if constexpr (std::is_same_v<Stmt, None>)
 		{
 			//todo?
