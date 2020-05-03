@@ -13,6 +13,9 @@ Interpreter::Interpreter()
 {
 	//we always have a global environment
 	environments.emplace_back();
+	//todo: nasty hack to preserve pointers to environments, shouldn't ever need more than this :b
+	//ideally we move to a proper stack, cba right now
+	environments.reserve(10'000);
 }
 
 void Interpreter::interpret(const std::vector<Statement>& statements)
@@ -37,7 +40,9 @@ void Interpreter::execute(const Statement& statement)
 
 void Interpreter::executeBlock(const std::vector<Statement>& statements)
 {
+	auto cur_env = &environments.back();
 	environments.emplace_back();
+	environments.back().parent = cur_env;
 
 	try
 	{

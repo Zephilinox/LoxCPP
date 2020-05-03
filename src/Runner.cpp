@@ -88,7 +88,7 @@ int Runner::run(std::string source, bool print_expressions)
 	
 	if (hadError)
 		return -1;
-
+	
 	if (print_expressions)
 	{
 		if (statements.size() == 1 && 
