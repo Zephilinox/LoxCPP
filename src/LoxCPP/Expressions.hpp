@@ -14,6 +14,7 @@ struct ExpressionBinary;
 struct ExpressionUnary;
 struct ExpressionGrouping;
 struct ExpressionAssignment;
+struct ExpressionLogical;
 
 struct ExpressionVariable
 {
@@ -27,7 +28,8 @@ using Expression = std::variant<
 	std::unique_ptr<ExpressionBinary>,
 	std::unique_ptr<ExpressionUnary>,
 	std::unique_ptr<ExpressionGrouping>,
-	std::unique_ptr<ExpressionAssignment>
+	std::unique_ptr<ExpressionAssignment>,
+	std::unique_ptr<ExpressionLogical>
 >;
 
 struct ExpressionBinary
@@ -52,6 +54,13 @@ struct ExpressionAssignment
 {
 	Token name;
 	Expression value;
+};
+
+struct ExpressionLogical
+{
+	Expression left;
+	Token operator_token;
+	Expression right;
 };
 
 inline std::string expressionToString(const Expression& expression)

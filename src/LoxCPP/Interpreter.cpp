@@ -237,7 +237,23 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 
 			environments.back().assign(expr->name, value);
 			return value;
-			
+		}
+		else if constexpr (std::is_same_v<Expr, std::unique_ptr<ExpressionLogical>>)
+		{
+			Token::Literal left = evaluate(expr->left);
+
+			if (expr->operator_token.type == Token::Type::Or)
+			{
+				if (isTruthy(left))
+					return left;
+			}
+			else
+			{
+				if (!isTruthy(left))
+					return left;
+			}
+
+			return evaluate(expr->right);
 		}
 		else if constexpr (std::is_same_v<Expr, ExpressionVariable>)
 		{

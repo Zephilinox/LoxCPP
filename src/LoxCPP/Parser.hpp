@@ -36,6 +36,8 @@ private:
 	Expression unary();
 	Expression primary();
 	Expression assignment();
+	Expression or();
+	Expression and();
 
 	std::vector<Statement> block();
 	Statement statement();

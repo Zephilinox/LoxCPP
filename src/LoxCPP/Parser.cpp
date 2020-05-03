@@ -121,13 +121,13 @@ Expression Parser::unary()
 Expression Parser::primary()
 {
 	if (match(Token::Type::False))
-		return false;
+		return Token::Literal{false};
 
 	if (match(Token::Type::True))
-		return true;
+		return Token::Literal{true};
 
 	if (match(Token::Type::Nil))
-		return None{};
+		return Token::Literal{None{}};
 
 	if (match(Token::Type::Number, Token::Type::String))
 		return previous().literal;
@@ -226,7 +226,7 @@ Statement Parser::declaration()
 
 Expression Parser::assignment()
 {
-	Expression expr = equality();
+	Expression expr = or();
 
 	if (match(Token::Type::Equal))
 	{
@@ -243,6 +243,42 @@ Expression Parser::assignment()
 
 		//discard exception object, just log, we don't need to synchronize
 		error(std::move(equals), "Invalid assignment target.");
+	}
+
+	return expr;
+}
+
+Expression Parser:: or ()
+{
+	Expression expr = and();
+
+	while (match(Token::Type::Or))
+	{
+		Token operator_token = previous();
+		Expression right = and();
+		expr = std::unique_ptr<ExpressionLogical>(new ExpressionLogical{
+			std::move(expr),
+			std::move(operator_token),
+			std::move(right)
+		});
+	}
+
+	return expr;
+}
+
+Expression Parser::and()
+{
+	Expression expr = equality();
+
+	while (match(Token::Type::And))
+	{
+		Token operator_token = previous();
+		Expression right = equality();
+		expr = std::unique_ptr<ExpressionLogical>(new ExpressionLogical{
+			std::move(expr),
+			std::move(operator_token),
+			std::move(right)
+		});
 	}
 
 	return expr;
