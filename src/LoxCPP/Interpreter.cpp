@@ -261,8 +261,10 @@ Token::Literal Interpreter::evaluate(const Expression& expression)
 		}
 		else if constexpr (std::is_same_v<Expr, None>)
 		{
-			//todo?
-			throw RuntimeError({}, "Invalid Expression");
+			//for some reason the expression evaluated to literally nothing
+			//right now this is caused e.g. by a lone ';', not sure if this is correct
+			//but it's a change that I made to fix variable assignment ending with ';', but maybe there's a better way
+			return None{}; //"nil" which isn't exactly correct but good enough for now
 		}
 		else
 		{

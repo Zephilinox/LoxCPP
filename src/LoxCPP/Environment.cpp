@@ -10,13 +10,13 @@ void Environment::define(std::string name, Token::Literal value)
 	values[std::move(name)] = std::move(value);
 }
 
-void Environment::assign(Token name, Token::Literal value)
+void Environment::assign(const Token& name, Token::Literal value)
 {
 	const auto it = values.find(name.lexeme);
 
 	if (it != values.end())
 	{
-		values.emplace(std::move(name.lexeme), std::move(value));
+		it->second = std::move(value);
 		return;
 	}
 

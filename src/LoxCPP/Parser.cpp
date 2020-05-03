@@ -147,6 +147,12 @@ Expression Parser::primary()
 		});
 	}
 
+	//todo: trying to fix the issue with lone ';', which should be valid
+	if (match(Token::Type::Semicolon))
+	{
+		return None{};
+	}
+	
 	throw error(peek(), "Expect expression.");
 }
 
@@ -321,7 +327,7 @@ Expression Parser::assignment()
 	return expr;
 }
 
-Expression Parser:: or ()
+Expression Parser::or()
 {
 	Expression expr = and();
 
