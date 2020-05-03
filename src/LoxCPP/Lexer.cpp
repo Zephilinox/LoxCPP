@@ -70,7 +70,10 @@ void Lexer::scanToken()
 		case '\t':
 			break;
 		case '\n':
+		{
 			line++;
+			break;
+		}
 		case '"': handleStringCharacter(); break;
 		default:
 		{
