@@ -176,6 +176,9 @@ Statement Parser::statement()
 
 	if (match(Token::Type::While))
 		return whileStatement();
+
+	if (match(Token::Type::For))
+		return forStatement();
 	
 	return expressionStatement();
 }
@@ -222,6 +225,60 @@ Statement Parser::whileStatement()
 		std::move(condition),
 		std::move(body)
 	});
+}
+
+Statement Parser::forStatement()
+{
+	consume(Token::Type::ParenthesisLeft, "Expect '(' after 'for'.");
+
+	Statement initializer = None{};
+	if (match(Token::Type::Semicolon))
+	{
+		//initializer is already None
+	}
+	else if (match(Token::Type::Var))
+	{
+		initializer = variableDeclaration();
+	}
+	else
+	{
+		initializer = expressionStatement();
+	}
+
+	Expression condition = None{};
+	if (!check(Token::Type::Semicolon))
+		condition = expression();
+	consume(Token::Type::Semicolon, "Expect ';' after loop condition.");
+
+	Expression increment = None{};
+	if (!check(Token::Type::ParenthesisRight))
+		increment = expression();
+	consume(Token::Type::ParenthesisRight, "Expect ')' after for clauses.");
+	
+	Statement body = statement();
+
+	if (!std::holds_alternative<None>(increment))
+	{
+		std::vector<Statement> statements;
+		statements.emplace_back(std::move(body));
+		statements.emplace_back(StatementExpression{std::move(increment)});
+		body = std::unique_ptr<StatementBlock>(new StatementBlock{std::move(statements)});
+	}
+
+	if (std::holds_alternative<None>(condition))
+		condition = Token::Literal{true};
+
+	body = std::unique_ptr<StatementWhile>(new StatementWhile{std::move(condition), std::move(body)});
+
+	if (!std::holds_alternative<None>(initializer))
+	{
+		std::vector<Statement> statements;
+		statements.emplace_back(std::move(initializer));
+		statements.emplace_back(std::move(body));
+		body = std::unique_ptr<StatementBlock>(new StatementBlock{std::move(statements)});
+	}
+	
+	return body;
 }
 
 Statement Parser::declaration()
