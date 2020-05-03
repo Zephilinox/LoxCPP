@@ -15,10 +15,16 @@ void Environment::assign(Token name, Token::Literal value)
 	const auto it = values.find(name.lexeme);
 
 	if (it != values.end())
+	{
 		values.emplace(std::move(name.lexeme), std::move(value));
+		return;
+	}
 
 	if (parent)
+	{
 		parent->assign(std::move(name), std::move(value));
+		return;
+	}
 
 	throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 }
