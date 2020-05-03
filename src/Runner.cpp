@@ -129,13 +129,47 @@ int Runner::runFile(char* file_name)
 int Runner::runPrompt()
 {	
 	std::string line;
-	while (true)
+	bool repl_done = false;
+	
+	while (!repl_done)
 	{
 		std::cout << "> ";
 		std::getline(std::cin, line);
 		
 		if (line == ":q")
+		{
+			repl_done = true;
 			break;
+		}
+
+		if (line == ":ml-start")
+		{
+			line.clear();
+			
+			std::string multiline_input;
+
+			bool multiline_done = false;
+			
+			while (!multiline_done)
+			{
+				std::getline(std::cin, multiline_input);
+
+				if (multiline_input == ":ml-end")
+				{
+					multiline_done = true;
+					break;
+				}
+
+				if (multiline_input == ":q")
+				{
+					multiline_done = true;
+					repl_done = true;
+					break;
+				}
+
+				line += multiline_input + "\n";
+			}
+		}
 		
 		run(line, true);
 		hadError = false;
